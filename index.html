@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch App</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container text-center mt-5">
+        <h1>Stopwatch</h1>
+        <div class="stopwatch">
+            <span id="display">00:00:00</span>
+        </div>
+        <div class="buttons mt-4">
+            <button id="start" class="btn btn-primary">Start</button>
+            <button id="stop" class="btn btn-danger">Stop</button>
+            <button id="reset" class="btn btn-secondary">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        const startButton = document.getElementById('start');
+        const stopButton = document.getElementById('stop');
+        const resetButton = document.getElementById('reset');
+
+        let startTime;
+        let running = false;
+        let interval;
+
+        startButton.addEventListener('click', start);
+        stopButton.addEventListener('click', stop);
+        resetButton.addEventListener('click', reset);
+
+        function start() {
+            if (!running) {
+                startTime = Date.now() - (interval || 0);
+                interval = setInterval(updateDisplay, 10);
+                startButton.textContent = 'Pause';
+                running = true;
+            } else {
+                clearInterval(interval);
+                startButton.textContent = 'Resume';
+                running = false;
+            }
+        }
+
+        function stop() {
+            if (running) {
+                clearInterval(interval);
+                stopButton.textContent = 'Resume';
+                running = false;
+            } else {
+                interval = setInterval(updateDisplay, 10);
+                stopButton.textContent = 'Stop';
+                startTime = Date.now() - (interval || 0);
+                running = true;
+            }
+        }
+
+        function reset() {
+            clearInterval(interval);
+            startButton.textContent = 'Start';
+            display.textContent = '00:00:00';
+            running = false;
+        }
+
+        function updateDisplay() {
+            const currentTime = Date.now();
+            const elapsedTime = new Date(currentTime - startTime);
+            const minutes = elapsedTime.getUTCMinutes();
+            const seconds = elapsedTime.getUTCSeconds();
+            const milliseconds = elapsedTime.getUTCMilliseconds();
+
+            display.textContent = `${pad(minutes)}:${pad(seconds)}:${pad(milliseconds, 3)}`;
+        }
+
+        function pad(num, width = 2) {
+            return num.toString().padStart(width, '0');
+        }
+    </script>
+</body>
+</html>
